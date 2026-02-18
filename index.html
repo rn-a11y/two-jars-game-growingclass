@@ -126,7 +126,9 @@ function render() {
 
         const jarDiv = document.createElement("div");
         jarDiv.className = "jar";
-        jarDiv.style.height = (jar.max / 19) * maxHeight + "px";
+
+        const jarHeight = (jar.max / 19) * maxHeight;
+        jarDiv.style.height = jarHeight + "px";
 
         if (selected === index) {
             jarDiv.classList.add("selected");
@@ -136,7 +138,10 @@ function render() {
 
         const water = document.createElement("div");
         water.className = "water";
-        water.style.height = (jar.value / jar.max) * jarDiv.clientHeight + "px";
+
+        // 🔥 FIX DI SINI
+        const waterHeight = (jar.value / jar.max) * jarHeight;
+        water.style.height = waterHeight + "px";
 
         const valueLabel = document.createElement("div");
         valueLabel.className = "value-label";
@@ -202,3 +207,4 @@ render();
 
 </body>
 </html>
+
