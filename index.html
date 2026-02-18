@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Two Jars Game</title>
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+.game {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 60px;
+    gap: 80px;
+}
+
+.jar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.max-label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.jar {
+    width: 100px;
+    position: relative;
+    border: 3px solid #999;
+    background: rgba(200,220,240,0.4);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.jar.selected {
+    border-color: orange;
+    box-shadow: 0 0 10px orange;
+}
+
+.water {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #00adb5;
+}
+
+.value-label {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.controls {
+    margin-top: 50px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #34495e;
+}
+
+.steps {
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Two Jars Game</h1>
+<div class="steps">Steps: <span id="steps">0</span></div>
+
+<div class="game" id="game"></div>
+
+<div class="controls">
+    <button onclick="resetGame()">RESET</button>
+</div>
+
+<script>
+
+const jars = [
+    { max: 19, value: 0 },
+    { max: 13, value: 13 },
+    { max: 7,  value: 7 }
+];
+
+let selected = null;
+let steps = 0;
+
+const maxHeight = 300;
+
+function render() {
+    const game = document.getElementById("game");
+    game.innerHTML = "";
+
+    jars.forEach((jar, index) => {
+
+        const container = document.createElement("div");
+        container.className = "jar-container";
+
+        const maxLabel = document.createElement("div");
+        maxLabel.className = "max-label";
+        maxLabel.innerText = "MAX " + jar.max + " L";
+
+        const jarDiv = document.createElement("div");
+        jarDiv.className = "jar";
+        jarDiv.style.height = (jar.max / 19) * maxHeight + "px";
+
+        if (selected === index) {
+            jarDiv.classList.add("selected");
+        }
+
+        jarDiv.onclick = () => handleClick(index);
+
+        const water = document.createElement("div");
+        water.className = "water";
+        water.style.height = (jar.value / jar.max) * jarDiv.clientHeight + "px";
+
+        const valueLabel = document.createElement("div");
+        valueLabel.className = "value-label";
+        valueLabel.innerText = jar.value;
+
+        jarDiv.appendChild(water);
+        jarDiv.appendChild(valueLabel);
+
+        container.appendChild(maxLabel);
+        container.appendChild(jarDiv);
+
+        game.appendChild(container);
+    });
+
+    document.getElementById("steps").innerText = steps;
+}
+
+function handleClick(index) {
+
+    if (selected === null) {
+        selected = index;
+    } else {
+        if (selected !== index) {
+            transfer(selected, index);
+        }
+        selected = null;
+    }
+
+    render();
+}
+
+function transfer(from, to) {
+
+    const fromJar = jars[from];
+    const toJar = jars[to];
+
+    const space = toJar.max - toJar.value;
+    const amount = Math.min(fromJar.value, space);
+
+    if (amount > 0) {
+        fromJar.value -= amount;
+        toJar.value += amount;
+        steps++;
+    }
+
+    if (jars[0].value === 10 && jars[1].value === 10) {
+        alert("Solved in " + steps + " steps!");
+    }
+}
+
+function resetGame() {
+    jars[0].value = 0;
+    jars[1].value = 13;
+    jars[2].value = 7;
+    steps = 0;
+    selected = null;
+    render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
